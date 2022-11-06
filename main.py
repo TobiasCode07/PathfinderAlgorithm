@@ -120,8 +120,9 @@ class Map:
             for col in range(self.cols):
                 self.get_node(row, col).reset()
 
-        global available
+        global available, available_to_restart
         available = True
+        available_to_restart = True
 
     def draw_path(self, path):
         global available_to_restart
