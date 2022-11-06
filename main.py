@@ -124,12 +124,15 @@ class Map:
         available = True
 
     def draw_path(self, path):
+        global available_to_restart
         pathfinder(self, True)
 
         for node in path:
             if node != self.get_start() and node != self.get_end():
                 time.sleep(DELAY)
                 node.path = True
+
+        available_to_restart = True
 
     def reset_scores(self):
         for row in range(self.rows):
@@ -270,6 +273,7 @@ pygame.display.set_icon(icon)
 
 map = Map(win, ROWS, COLS, WIDTH, HEIGHT, SQUARE_SIZE, BLACK, WHITE, ORANGE, BLUE, YELLOW, GREEN, RED)
 available = True
+available_to_restart = True
 
 clock = pygame.time.Clock()
 
@@ -285,9 +289,10 @@ while running:
                 running = False
                 break
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
-                    map.reset_all()
+            if available_to_restart:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        map.reset_all()
 
             if available:
                 if not map.get_start() or not map.get_end() or not map.is_barrier():
@@ -310,6 +315,7 @@ while running:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         available = False
+                        available_to_restart = False
                         path = pathfinder(map, False)
                         map.reset_scores()
                         if path:
@@ -325,6 +331,7 @@ while running:
                             else:
                                 messagebox.showerror("Error", "There is no path for this state\nChange it and try again")
                             available = True
+                            available_to_restart = True
         except:
             pass
 
